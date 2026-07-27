@@ -1,0 +1,78 @@
+{
+  "source": {
+    "source_file": "CUAD_v1/master_clauses.csv",
+    "source_rows_contracts": 510,
+    "source_columns": 83,
+    "context_category_columns": 41,
+    "answer_columns": 41,
+    "official_dataset_doi": "10.5281/zenodo.4595826",
+    "official_license": "CC BY 4.0"
+  },
+  "raw_audit": {
+    "raw_context_annotations": 13101,
+    "normalized_text_values_with_any_duplicate": 1336,
+    "rows_in_any_duplicate_group": 3393,
+    "normalized_text_values_with_multiple_categories": 1063,
+    "rows_in_multiple_category_groups": 2344,
+    "clean_unique_category_passages_all_41_categories": 9981
+  },
+  "selection_rule": {
+    "excluded_non_theme_labels": [
+      "Document Name",
+      "Parties",
+      "Agreement Date",
+      "Effective Date",
+      "Expiration Date"
+    ],
+    "minimum_distinct_contracts_per_category": 100,
+    "ranking": "descending clean unique passage count; alphabetical category name as tie-breaker",
+    "number_selected": 10,
+    "selected_categories": [
+      "Audit Rights",
+      "Anti-Assignment",
+      "Insurance",
+      "Cap On Liability",
+      "Governing Law",
+      "Revenue/Profit Sharing",
+      "Minimum Commitment",
+      "Post-Termination Services",
+      "License Grant",
+      "Ip Ownership Assignment"
+    ]
+  },
+  "final_dataset": {
+    "examples": 4356,
+    "distinct_contracts": 462,
+    "classes": 10,
+    "mean_word_count": 55.13154269972452,
+    "median_word_count": 43.0,
+    "p95_word_count": 136.0,
+    "max_word_count": 704,
+    "examples_over_256_words": 36,
+    "pct_examples_over_256_words": 0.8264462809917356,
+    "split_summary": [
+      {
+        "split": "test",
+        "rows": 435,
+        "contracts": 46
+      },
+      {
+        "split": "train",
+        "rows": 3486,
+        "contracts": 368
+      },
+      {
+        "split": "validation",
+        "rows": 435,
+        "contracts": 48
+      }
+    ]
+  },
+  "cleaning_rules": [
+    "Normalize only whitespace and case for duplicate/conflict detection; preserve original clause text for model input.",
+    "Within each category, keep one deterministic representative of exact normalized duplicate text.",
+    "Remove every normalized text value assigned to more than one CUAD category because the capstone task is single-label multiclass classification.",
+    "Exclude blank or unparsable list elements.",
+    "Keep all remaining text, including punctuation and legal wording, in the original clause_text field."
+  ]
+}

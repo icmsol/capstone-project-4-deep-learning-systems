@@ -1,0 +1,102 @@
+{
+  "project_title": "Transformer-Based Classification of Contract Clause Themes for ICM Solutions Knowledge Reuse",
+  "task": "10-class single-label text classification of expert-annotated CUAD contract clause passages",
+  "dataset": {
+    "source_file": "CUAD_v1/master_clauses.csv",
+    "processed_file": "cuad_clause_classification.csv",
+    "selected_categories": [
+      "Audit Rights",
+      "Anti-Assignment",
+      "Insurance",
+      "Cap On Liability",
+      "Governing Law",
+      "Revenue/Profit Sharing",
+      "Minimum Commitment",
+      "Post-Termination Services",
+      "License Grant",
+      "Ip Ownership Assignment"
+    ],
+    "num_examples": 4356,
+    "num_contracts": 462,
+    "split_method": "StratifiedGroupKFold with 10 folds, shuffle=True, random_state=42; folds 0-7 train, 8 validation, 9 test",
+    "split_reason": "Preserves contract-level separation while balancing clause categories across splits.",
+    "max_sequence_length": 256,
+    "tokenization": "Lowercase regex word-and-punctuation tokenizer; vocabulary fit on training split only",
+    "vocabulary": {
+      "min_frequency": 2,
+      "max_size": 20000,
+      "special_tokens": [
+        "<PAD>",
+        "<UNK>"
+      ]
+    }
+  },
+  "model": {
+    "framework": "PyTorch",
+    "architecture": "Custom Transformer encoder classifier trained from scratch",
+    "embedding_dim": 128,
+    "positional_embedding": "learned",
+    "encoder_layers": 2,
+    "attention_heads": 4,
+    "feedforward_dim": 256,
+    "activation": "GELU",
+    "pooling": "padding-mask-aware mean pooling",
+    "classifier": "Linear(128, 10)",
+    "parameter_initialization": "PyTorch defaults with global seed 42"
+  },
+  "training_common": {
+    "random_seed": 42,
+    "batch_size": 64,
+    "epochs": 15,
+    "loss": "CrossEntropyLoss, unweighted",
+    "optimizer": "AdamW",
+    "learning_rate": 0.0005,
+    "weight_decay": 0.01,
+    "gradient_clip_norm": 1.0,
+    "scheduler": null,
+    "checkpoint_rule": "highest validation macro F1; ties resolved by lower validation loss",
+    "early_stopping": false,
+    "device": "CUDA when available, otherwise CPU"
+  },
+  "controlled_comparison": {
+    "baseline": {
+      "dropout": 0.1
+    },
+    "experimental": {
+      "dropout": 0.3
+    },
+    "only_major_change": "dropout probability",
+    "all_other_data_architecture_training_and_evaluation_settings_identical": true
+  },
+  "evaluation": {
+    "primary_metric": "macro F1 on untouched test split",
+    "secondary_metrics": [
+      "accuracy",
+      "macro precision",
+      "macro recall",
+      "weighted F1",
+      "per-class precision/recall/F1",
+      "confusion matrix"
+    ],
+    "training_diagnostics": [
+      "training loss",
+      "validation loss",
+      "validation accuracy",
+      "validation macro F1"
+    ],
+    "error_analysis": [
+      "representative correct predictions",
+      "representative errors",
+      "high-confidence errors",
+      "frequent class confusions",
+      "truncated long passages"
+    ]
+  },
+  "integrity_controls": [
+    "No contract appears in more than one split.",
+    "Vocabulary is built from training text only.",
+    "Validation data selects checkpoints; test data is evaluated once after both configurations are frozen.",
+    "The same folds, vocabulary, batches, seed procedure, epochs, optimizer, learning rate, and checkpoint rule are used for both configurations.",
+    "No confidential ICM or client data is used."
+  ]
+}
