@@ -75,18 +75,28 @@ Validation selected the baseline, while the untouched test set modestly favored 
 
 ### Local environment
 
+Use the portable project dependency set for local execution:
+
 ```bash
 git clone https://github.com/icmsol/capstone-project-4-deep-learning-systems.git
 cd capstone-project-4-deep-learning-systems
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-jupyter notebook deep_learning.ipynb
+python -m pip install --upgrade pip
+pip install -r requirements_minimal.txt
+jupyter lab deep_learning.ipynb
 ```
 
-A CUDA-capable GPU is recommended for reproducing the recorded training runtime, although the notebook includes a CPU fallback.
+A CUDA-capable GPU is recommended for reproducing the recorded training runtime, although the notebook includes a CPU fallback. For local GPU execution, install the PyTorch build that matches the operating system, GPU driver, and CUDA environment.
+
+### Dependency files
+
+- `requirements.txt` is the exact 703-package Google Colab environment snapshot produced by the final T4 run using `python -m pip freeze`. It is retained for rubric compliance, auditability, and archival reproducibility. Because it includes Colab-, CUDA-, and hosted-runtime-specific packages, it is not intended as a universal local installation file.
+- `requirements_minimal.txt` contains the portable project-relevant dependencies recommended for a new local environment.
 
 ## Repository structure
+
+The fully executed repository-root `deep_learning.ipynb` is the sole authoritative submission notebook. The `notebooks/` directory is retained for organization and documentation without a conflicting duplicate copy.
 
 ```text
 .
@@ -110,8 +120,7 @@ A CUDA-capable GPU is recommended for reproducing the recorded training runtime,
 │   ├── README.md
 │   └── final report figures
 ├── notebooks/
-│   ├── README.md
-│   └── deep_learning.ipynb
+│   └── README.md
 ├── reports/
 │   ├── README.md
 │   ├── Deep_Learning_Systems_Analysis_Report.pdf
